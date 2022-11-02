@@ -1,5 +1,6 @@
 package com.example.board.domain.login;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,8 +16,16 @@ public class Member {
     private Long id;
 
     @Column(length = 100, nullable = false)
-    private String nameId;
+    private String memberId;
 
     @Column(length = 100, nullable = false)
-    private String password;
+    private String memberPw;
+
+    @Builder
+    public Member(String memberId, String memberPw){
+        this.memberId = memberId;
+        this.memberPw = memberPw;
+    }
+
+
 }

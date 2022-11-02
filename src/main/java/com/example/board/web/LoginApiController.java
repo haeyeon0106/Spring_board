@@ -1,8 +1,8 @@
 package com.example.board.web;
 
 import com.example.board.service.login.LoginService;
+import com.example.board.web.dto.LoginRequestDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,9 +13,9 @@ public class LoginApiController {
 
     private final LoginService loginService;
 
-    @PostMapping("/posts/login")
-    public void login( ){}
+    @PostMapping("/login")
+    public String login(@RequestBody LoginRequestDto loginDto){
+        return loginService.login(loginDto);
+    }
 
-    @GetMapping("/posts/logout")
-    public void logout(){}
 }
