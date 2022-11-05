@@ -4,17 +4,18 @@ import com.example.board.domain.login.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
 @NoArgsConstructor
-public class LoginRequestDto {
-
+public class LoginDto {
 
     private String memberId;
     private String memberPw;
 
     @Builder
-    public LoginRequestDto(String memberId, String memberPw){
+    public LoginDto(String memberId, String memberPw){
         this.memberId = memberId;
         this.memberPw = memberPw;
     }
