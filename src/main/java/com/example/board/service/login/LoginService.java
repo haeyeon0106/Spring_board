@@ -2,7 +2,7 @@ package com.example.board.service.login;
 
 import com.example.board.domain.login.Member;
 import com.example.board.domain.login.MemberRepository;
-import com.example.board.web.dto.LoginDto;
+import com.example.board.web.dto.MemberRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,23 +15,25 @@ import javax.transaction.Transactional;
 public class LoginService {
 
     private MemberRepository memberRepository;
-
     private PasswordEncoder passwordEncoder;
 
-
     @Transactional
-    public String login(Member member,@RequestBody LoginDto loginDto){
-        Member user = memberRepository.findByMemberId(loginDto.getMemberId());
+    public String signUp(@RequestBody MemberRequestDto memberRequestDto){
 
-        String encodePw = passwordEncoder.encode(member.getMemberPw());
-        loginDto.setMemberPw(encodePw);
-        memberRepository.save(member);
+        if (memberRepository.existsById(memberRequestDto.getMemberId())) {  // 아이디 중복확인
+            throw new RuntimeException("중복된 아이디입니다.");
+        } else {    // 중복되지 않은 아이디
+            String encodePw = passwordEncoder.encode(memberRequestDto.getMemberPw());
+            memberRequestDto.setMemberPw(encodePw);
+            Member entity = memberRequestDto.toEntity();
+            memberRepository.save(entity);
 
-        if (user.getMemberId().isEmpty()) {
-            throw new RuntimeException("아이디 값이 존재하지 않습니다.");
-        } else if (passwordEncoder.matches(loginDto.getMemberPw(),user.getMemberPw())) {
             return "SUCCESS";
         }
-        return "FAILED";
+    }
+
+    @Transactional
+    public void login(){
+
     }
 }
