@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberRepository extends JpaRepository<Member,Long> {
     Boolean existsById(String memberId);
+    Member findById(String memberId);
 }

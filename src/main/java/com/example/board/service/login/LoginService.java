@@ -2,6 +2,7 @@ package com.example.board.service.login;
 
 import com.example.board.domain.login.Member;
 import com.example.board.domain.login.MemberRepository;
+import com.example.board.web.dto.LoginDto;
 import com.example.board.web.dto.MemberRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,7 +34,15 @@ public class LoginService {
     }
 
     @Transactional
-    public void login(){
+    public String login(@RequestBody LoginDto loginDto){
 
+        Member memberEntity = memberRepository.findById(loginDto.getMemberId());
+
+        if(memberEntity==null){
+            throw  new RuntimeException("아이디가 존재하지 않습니다");
+        }else if(!passwordEncoder.matches(loginDto.getMemberPw(),memberEntity.getMemberPw())){
+            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+        }
+        return "로그인 성공";
     }
 }

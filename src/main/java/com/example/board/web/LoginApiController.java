@@ -1,6 +1,7 @@
 package com.example.board.web;
 
 import com.example.board.service.login.LoginService;
+import com.example.board.web.dto.LoginDto;
 import com.example.board.web.dto.MemberRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,4 +18,8 @@ public class LoginApiController {
         return loginService.signUp(memberRequestDto);
     }
 
+    @PostMapping("/login")
+    public String login(@RequestBody LoginDto loginDto){
+        return loginService.login(loginDto);
+    }
 }
