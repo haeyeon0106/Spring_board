@@ -21,13 +21,21 @@ public class LoginService {
     @Transactional
     public String signUp(@RequestBody MemberRequestDto memberRequestDto){
 
-        if (memberRepository.existsById(memberRequestDto.getMemberId())) {  // 아이디 중복확인
+        if (memberRepository.existsByMemberId(memberRequestDto.getMemberId())) {  // 아이디 중복확인
             throw new RuntimeException("중복된 아이디입니다.");
         } else {    // 중복되지 않은 아이디
+
+            // 암호화
             String encodePw = passwordEncoder.encode(memberRequestDto.getMemberPw());
             memberRequestDto.setMemberPw(encodePw);
-            Member entity = memberRequestDto.toEntity();
-            memberRepository.save(entity);
+
+            Member member = Member.builder()
+                    .memberName(memberRequestDto.getMemberName())
+                    .memberId(memberRequestDto.getMemberId())
+                    .memberPw(encodePw)
+                    .build();
+
+            memberRepository.save(member);
 
             return "SUCCESS";
         }
@@ -36,7 +44,7 @@ public class LoginService {
     @Transactional
     public String login(@RequestBody LoginDto loginDto){
 
-        Member memberEntity = memberRepository.findById(loginDto.getMemberId());
+        Member memberEntity = memberRepository.findByMemberId(loginDto.getMemberId());
 
         if(memberEntity==null){
             throw  new RuntimeException("아이디가 존재하지 않습니다");

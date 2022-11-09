@@ -20,7 +20,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     // configure 메소드를 통해 http 보안 설정
     @Override
     protected void configure(HttpSecurity http) throws Exception{
-        http.cors().disable()
+        http
                 .csrf().disable()
                 .formLogin().disable()
                 .headers().frameOptions().disable();
