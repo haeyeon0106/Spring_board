@@ -2,14 +2,20 @@ package com.example.board.service.login;
 
 import com.example.board.domain.login.Member;
 import com.example.board.domain.login.MemberRepository;
-import com.example.board.web.dto.LoginDto;
 import com.example.board.web.dto.MemberRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -18,6 +24,8 @@ public class LoginService {
     private MemberRepository memberRepository;
     private PasswordEncoder passwordEncoder;
 
+    public static final Map<String,String> sessionStore = new HashMap<>();
+    public static final String SESSION_COOKIE_NAME = "mySessionId";
     @Transactional
     public String signUp(@RequestBody MemberRequestDto memberRequestDto){
 
@@ -42,15 +50,34 @@ public class LoginService {
     }
 
     @Transactional
-    public String login(@RequestBody LoginDto loginDto){
+    public String login(String memberId, HttpServletResponse response){
 
-        Member memberEntity = memberRepository.findByMemberId(loginDto.getMemberId());
+        // 예측불가한 랜덤한 sessionId값 생성(예측가능할 경우 해커가 악의로 접근 가능)
+        String sessionId = UUID.randomUUID().toString();
+        sessionStore.put(sessionId,memberId);
 
-        if(memberEntity==null){
-            throw  new RuntimeException("아이디가 존재하지 않습니다");
-        }else if(!passwordEncoder.matches(loginDto.getMemberPw(),memberEntity.getMemberPw())){
-            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+        Cookie cookie = new Cookie(SESSION_COOKIE_NAME,sessionId);
+        cookie.setMaxAge(24*60*60); // 유효시간(1day)
+        response.addCookie(cookie);
+
+        return cookie.getValue();
+    }
+
+    public Cookie findCookies(HttpServletRequest request, String cookieName){
+        if(request.getCookies()==null){
+            return null;
         }
-        return "로그인 성공";
+        return Arrays.stream(request.getCookies())
+                .filter(c -> c.getName().equals(cookieName))
+                .findAny()
+                .orElse(null);
+    }
+
+    @Transactional
+    public void logout(HttpServletRequest request){
+        Cookie cookie = findCookies(request,SESSION_COOKIE_NAME);
+        if(cookie != null){
+            sessionStore.remove(cookie.getValue());
+        }
     }
 }
