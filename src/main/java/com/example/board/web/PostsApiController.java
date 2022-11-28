@@ -1,9 +1,9 @@
 package com.example.board.web;
 
 import com.example.board.service.posts.PostsService;
-import com.example.board.web.dto.PostsResponseDto;
-import com.example.board.web.dto.PostsSaveRequestDto;
-import com.example.board.web.dto.PostsUpdateRequestDto;
+import com.example.board.web.dto.PostDto.PostsResponseDto;
+import com.example.board.web.dto.PostDto.PostsSaveRequestDto;
+import com.example.board.web.dto.PostDto.PostsUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

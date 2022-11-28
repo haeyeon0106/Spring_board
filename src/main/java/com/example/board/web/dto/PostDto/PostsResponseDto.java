@@ -1,4 +1,4 @@
-package com.example.board.web.dto;
+package com.example.board.web.dto.PostDto;
 
 import com.example.board.domain.posts.Posts;
 import lombok.Getter;

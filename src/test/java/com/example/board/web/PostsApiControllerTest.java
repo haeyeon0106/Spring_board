@@ -1,7 +1,7 @@
 //package com.example.board.web;
 //
 //import com.example.board.domain.posts.PostsRepository;
-//import com.example.board.web.dto.PostsSaveRequestDto;
+//import com.example.board.web.dto.PostDto.PostsSaveRequestDto;
 //import org.junit.After;
 //import org.junit.jupiter.api.Test;
 //import org.springframework.beans.factory.annotation.Autowired;

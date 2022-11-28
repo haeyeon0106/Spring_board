@@ -2,9 +2,9 @@ package com.example.board.service.posts;
 
 import com.example.board.domain.posts.Posts;
 import com.example.board.domain.posts.PostsRepository;
-import com.example.board.web.dto.PostsResponseDto;
-import com.example.board.web.dto.PostsSaveRequestDto;
-import com.example.board.web.dto.PostsUpdateRequestDto;
+import com.example.board.web.dto.PostDto.PostsResponseDto;
+import com.example.board.web.dto.PostDto.PostsSaveRequestDto;
+import com.example.board.web.dto.PostDto.PostsUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
