@@ -2,7 +2,7 @@ package com.example.board.service.login;
 
 import com.example.board.domain.login.Member;
 import com.example.board.domain.login.MemberRepository;
-import com.example.board.web.dto.MemberRequestDto;
+import com.example.board.web.dto.MemberDto.MemberRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,11 +22,13 @@ import java.util.UUID;
 @Service
 public class LoginService {
 
-    private MemberRepository memberRepository;
-    private PasswordEncoder passwordEncoder;
+    private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public static final Map<String,String> sessionStore = new HashMap<>();
     public static final String SESSION_COOKIE_NAME = "mySessionId";
+    private final HttpSession httpSession;
+
     @Transactional
     public String signUp(@RequestBody MemberRequestDto memberRequestDto){
 
@@ -56,6 +59,9 @@ public class LoginService {
         String sessionId = UUID.randomUUID().toString();
         sessionStore.put(sessionId,memberId);
 
+
+        httpSession.setAttribute(sessionId, memberId);
+
         Cookie cookie = new Cookie(SESSION_COOKIE_NAME,sessionId);
         cookie.setMaxAge(24*60*60); // 유효시간(1day)
         response.addCookie(cookie);
@@ -65,7 +71,7 @@ public class LoginService {
 
     public Cookie findCookies(HttpServletRequest request, String cookieName){
         if(request.getCookies()==null){
-            return null;
+            //throw new Exception("쿠키에 값이 없습니다.");
         }
         return Arrays.stream(request.getCookies())
                 .filter(c -> c.getName().equals(cookieName))
