@@ -4,40 +4,40 @@ import com.example.board.service.comments.CommentsService;
 import com.example.board.web.dto.CommentDto.CommentRequestDto;
 import com.example.board.web.dto.CommentDto.CommentResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RequiredArgsConstructor
+@Slf4j
 @RestController
 public class CommentsApiController {
 
-    @Autowired
     private final CommentsService commentsService;
 
     // 생성
-    @PostMapping("/comments/list/{id}")
+    @PostMapping("/list/{id}/comment")
     public ResponseEntity create(@PathVariable Long id, String memberName, @RequestBody CommentRequestDto commentRequestDto){
         return ResponseEntity.ok(commentsService.createComments(id,memberName,commentRequestDto));
     }
 
     // 조회
-    @GetMapping("/comments/list/{id}")
+    @GetMapping("/list/{id}/comment")
     public List<CommentResponseDto> read(@PathVariable Long id){
         return commentsService.readComments(id);
     }
 
     // 수정
-    @PutMapping("/comments/list/{id}")
+    @PutMapping("/list/{id}/comment")
     public ResponseEntity update(@PathVariable Long id, CommentRequestDto commentRequestDto){
         commentsService.updateComments(id,commentRequestDto);
         return ResponseEntity.ok(id);
     }
 
     // 삭제
-    @DeleteMapping("comments/list/{id}")
+    @DeleteMapping("/list/{id}/comment")
     public ResponseEntity delete(@PathVariable Long id){
         commentsService.deleteComments(id);
         return ResponseEntity.ok(id);
