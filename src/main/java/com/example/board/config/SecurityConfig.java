@@ -24,7 +24,7 @@ public class SecurityConfig {
                 .headers().frameOptions().disable()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api").permitAll()
+                .antMatchers("/","/**").permitAll()
                 .anyRequest().authenticated();
         return http.build();
 

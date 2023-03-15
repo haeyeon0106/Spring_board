@@ -25,7 +25,7 @@ public class MemberService {
     public Long signup(MemberRequestDto memberRequestDto){
 //        validateMember(memberRequestDto);
         boolean existId = memberRepository.existsByMemberId(memberRequestDto.getMemberId());
-        if(!existId){throw new RuntimeException("이미 존재하는 이메일입니다.");}
+        if(!existId){throw new RuntimeException("이미 존재하는 아이디입니다.");}
         Member member = Member.builder().memberId(memberRequestDto.getMemberId())
                 .memberPw(memberRequestDto.getMemberPw())
                 .name(memberRequestDto.getName())
