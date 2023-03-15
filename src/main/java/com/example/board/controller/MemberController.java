@@ -1,8 +1,10 @@
 package com.example.board.controller;
 
+import com.example.board.config.jwt.JwtProvider;
 import com.example.board.dto.MemberRequestDto;
 import com.example.board.dto.MemberResponseDto;
 import com.example.board.dto.MemberUpdateDto;
+import com.example.board.dto.TokenDto;
 import com.example.board.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
 
     private final MemberService memberService;
+    private final JwtProvider jwtProvider;
 
     // 회원가입
     @PostMapping("/api/v1/signup")
@@ -23,8 +26,9 @@ public class MemberController {
 
     // 로그인
     @PostMapping("/api/v1/login")
-    public Long login(@RequestBody MemberRequestDto memberRequestDto){
-        return memberService.login(memberRequestDto);
+    public TokenDto login(@RequestBody MemberRequestDto memberRequestDto){
+        MemberResponseDto loginResponse = memberService.login(memberRequestDto);
+        return jwtProvider.generateToken(loginResponse.getMemberId());
     }
 
     // 이름 수정

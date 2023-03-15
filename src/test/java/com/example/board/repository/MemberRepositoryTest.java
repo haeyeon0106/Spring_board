@@ -10,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,8 +35,10 @@ class MemberRepositoryTest {
         Member saveMember = memberRepository.save(member);
 
         // then
-        Member findMember = memberRepository.findByMemberId(saveMember.getMemberId()).orElseThrow(()->new RuntimeException("저장된 회원이 없습니다"));
+        Member findMember = memberRepository.findByMemberId(saveMember.getMemberId());
+//                .orElseThrow(()->new RuntimeException("저장된 회원이 없습니다"));
 
+        if (findMember == null){throw new RuntimeException("저장된 회원이 없습니다");}
         Assertions.assertEquals(findMember,saveMember);
         Assertions.assertEquals(findMember,member);
     }
@@ -80,11 +81,11 @@ class MemberRepositoryTest {
 
 
         // when
-        Optional<Member> memberInfo = memberRepository.findByMemberId(memberId);
+        Member memberInfo = memberRepository.findByMemberId(memberId);
 
         // then
-        assertEquals(member.getMemberId(),memberInfo.get().getMemberId());
-        assertEquals(member.getName(),memberInfo.get().getName());
+        assertEquals(member.getMemberId(),memberInfo.getMemberId());
+        assertEquals(member.getName(),memberInfo.getName());
     }
 
     // 가입 시 생성시간 잘 등록
@@ -95,8 +96,10 @@ class MemberRepositoryTest {
         memberRepository.save(member);
 
         //when
-        Member findMember = memberRepository.findByMemberId(member.getMemberId()).orElseThrow(() -> new Exception());
+        Member findMember = memberRepository.findByMemberId(member.getMemberId());
+//                .orElseThrow(() -> new Exception());
 
+        if(findMember == null){throw new RuntimeException("");}
         //then
         assertThat(findMember.getCreatedDate()).isNotNull();
         assertThat(findMember.getLastModifiedDate()).isNotNull();
