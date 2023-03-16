@@ -1,7 +1,6 @@
 package com.example.board.domain;
 
 import lombok.*;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 
@@ -36,9 +35,5 @@ public class Member extends BaseTimeEntity{
 
     public void updateName(String newName){
         this.name = newName;
-    }
-    // 패스워드 암호화
-    public void encodePassword(PasswordEncoder passwordEncoder){
-        this.memberPw = passwordEncoder.encode(memberPw);
     }
 }

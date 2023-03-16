@@ -22,9 +22,10 @@ public class JwtProvider {
         this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
     }
 
-    public TokenDto generateToken(String uid){
+    public TokenDto generateToken(String uid,String name){
 
         Claims claims = Jwts.claims().setSubject(uid); // sub(subject) : 토큰제목
+        claims.put("name",name);
 
         Date now = new Date();
 

@@ -7,7 +7,7 @@ import com.example.board.dto.MemberUpdateDto;
 import com.example.board.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private PasswordEncoder passwordEncoder;
+//    private PasswordEncoder passwordEncoder;
+    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     /*
     * 회원가입
     * */
@@ -25,13 +26,9 @@ public class MemberService {
     public Long signup(MemberRequestDto memberRequestDto){
 //        validateMember(memberRequestDto);
         boolean existId = memberRepository.existsByMemberId(memberRequestDto.getMemberId());
-        if(!existId){throw new RuntimeException("이미 존재하는 아이디입니다.");}
-        Member member = Member.builder().memberId(memberRequestDto.getMemberId())
-                .memberPw(memberRequestDto.getMemberPw())
-                .name(memberRequestDto.getName())
-                .build();
+        if(existId){throw new RuntimeException("이미 존재하는 아이디입니다.");}
 
-        return memberRepository.save(member).getId();
+        return memberRepository.save(memberRequestDto.toEntity()).getId();
     }
 
 //    private void validateMember(MemberRequestDto memberRequestDto) {        // 중복회원가입 검증
@@ -51,11 +48,11 @@ public class MemberService {
         // 아이디 비번 일치한 지 확인
         if(entity == null){
             throw new RuntimeException("아이디가 일치하지 않습니다.");
-        } else if (!passwordEncoder.matches(entity.getMemberPw(), memberRequestDto.getMemberPw())) {
+        } else if (!passwordEncoder.matches(memberRequestDto.getMemberPw(),entity.getMemberPw())) { //(암호화 전 비번, 암호화(db저장)된 비번)
             throw new RuntimeException("비밀번호가 일치하지 않습니다.");
         }
-        MemberResponseDto memberResponseDto = new MemberResponseDto(entity);
-        return memberResponseDto;
+
+        return new MemberResponseDto(entity);
     }
 
     /*

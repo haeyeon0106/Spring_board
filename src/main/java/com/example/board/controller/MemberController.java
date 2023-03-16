@@ -28,12 +28,13 @@ public class MemberController {
     @PostMapping("/api/v1/login")
     public TokenDto login(@RequestBody MemberRequestDto memberRequestDto){
         MemberResponseDto loginResponse = memberService.login(memberRequestDto);
-        return jwtProvider.generateToken(loginResponse.getMemberId());
+        return jwtProvider.generateToken(loginResponse.getMemberId(),loginResponse.getName());
+//        return memberService.login(memberRequestDto);
     }
 
     // 이름 수정
-    @PostMapping("/api/v1/changeName")
-    public String changeName(Long id, MemberUpdateDto memberUpdateDto){
+    @PutMapping("/api/v1/update/{id}")
+    public String changeName(@PathVariable Long id, @RequestBody MemberUpdateDto memberUpdateDto){
         return memberService.changeName(id,memberUpdateDto);
     }
 
