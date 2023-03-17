@@ -4,6 +4,8 @@ import com.example.board.domain.Member;
 import com.example.board.dto.MemberRequestDto;
 import com.example.board.dto.MemberResponseDto;
 import com.example.board.dto.MemberUpdateDto;
+import com.example.board.exception.custom.InfoException;
+import com.example.board.exception.error.ErrorCode;
 import com.example.board.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +28,9 @@ public class MemberService {
     public Long signup(MemberRequestDto memberRequestDto){
 //        validateMember(memberRequestDto);
         boolean existId = memberRepository.existsByMemberId(memberRequestDto.getMemberId());
-        if(existId){throw new RuntimeException("이미 존재하는 아이디입니다.");}
+        if(existId){
+            throw new InfoException(ErrorCode.INTERNAL_SERVER_ERROR,"이미 존재하는 아이디입니다.");
+        }
 
         return memberRepository.save(memberRequestDto.toEntity()).getId();
     }
@@ -47,9 +51,9 @@ public class MemberService {
 
         // 아이디 비번 일치한 지 확인
         if(entity == null){
-            throw new RuntimeException("아이디가 일치하지 않습니다.");
+            throw new InfoException(ErrorCode.INTERNAL_SERVER_ERROR,"아이디가 일치하지 않습니다.");
         } else if (!passwordEncoder.matches(memberRequestDto.getMemberPw(),entity.getMemberPw())) { //(암호화 전 비번, 암호화(db저장)된 비번)
-            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+            throw new InfoException(ErrorCode.INTERNAL_SERVER_ERROR,"비밀번호가 일치하지 않습니다.");
         }
 
         return new MemberResponseDto(entity);
@@ -60,7 +64,7 @@ public class MemberService {
     * */
     @Transactional
     public String changeName(Long id, MemberUpdateDto memberUpdateDto){
-        Member member = memberRepository.findById(id).orElseThrow(()->new RuntimeException("일치하는 회원이 없습니다."));
+        Member member = memberRepository.findById(id).orElseThrow(()->new InfoException(ErrorCode.INTERNAL_SERVER_ERROR,"일치하는 회원이 없습니다."));
         member.updateName(memberUpdateDto.getName());
         return "이름 변경 성공";
     }
@@ -72,7 +76,7 @@ public class MemberService {
     public MemberResponseDto findByMemberId(String memberId){
         Member entity = memberRepository.findByMemberId(memberId);
 //                .orElseThrow(()->new RuntimeException("존재하지 않는 아이디입니다"));
-        if (entity == null){throw new RuntimeException("존재하지 않는 아이디입니다.");}
+        if (entity == null){throw new InfoException(ErrorCode.INTERNAL_SERVER_ERROR,"존재하지 않는 아이디입니다.");}
         return new MemberResponseDto(entity);
     }
 
