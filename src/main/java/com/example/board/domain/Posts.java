@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -22,6 +23,9 @@ public class Posts {
     private String contents;
 
     private String author;
+
+    @OneToMany(mappedBy = "posts",cascade = CascadeType.ALL)
+    private List<Comments> comments;
 
     @Builder
     public Posts(String title,String contents,String author){
