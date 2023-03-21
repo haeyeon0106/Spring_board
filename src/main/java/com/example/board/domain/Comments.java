@@ -22,6 +22,7 @@ public class Comments {
     private String contents;
 
     @ManyToOne(fetch = FetchType.LAZY)
+//    @JsonIgnoreProperties({"posts"})    // 무한참조 방지
     @JoinColumn(name = "posts_id")
     private Posts posts;
 

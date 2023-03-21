@@ -1,7 +1,6 @@
 package com.example.board.service;
 
 import com.example.board.domain.Comments;
-import com.example.board.domain.Member;
 import com.example.board.domain.Posts;
 import com.example.board.dto.CommentsRequestDto;
 import com.example.board.dto.CommentsResponseDto;
@@ -13,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -46,15 +44,28 @@ public class CommentService {
 //    }
 
     @Transactional
-    public String updateComment(Long id, CommentsUpdateRequestDto updateRequestDto){
-        Comments comments = commentRepository.findById(id)
+    public String updateComment(Long id, Long commentId, CommentsUpdateRequestDto updateRequestDto){
+        postsRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다. id: " + id));
+        Comments comments = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다. id: "+id));
         comments.update(updateRequestDto.getContents());
         return "댓글 수정 완료";
     }
     @Transactional
-    public String deleteComment(Long id){
-        Comments comments = commentRepository.findById(id)
+    public CommentsResponseDto findByCommentId(Long id,Long commentId){
+        postsRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다. id: " + id));
+
+        Comments comments = commentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다. id: " + id));
+
+        return new CommentsResponseDto(comments);
+    }
+
+    @Transactional
+    public String deleteComment(Long id, Long commentId){
+        postsRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다. id: " + id));
+
+        Comments comments = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다. id: " + id));
 
         commentRepository.delete(comments);
