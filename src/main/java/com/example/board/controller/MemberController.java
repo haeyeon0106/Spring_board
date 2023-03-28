@@ -9,7 +9,6 @@ import com.example.board.service.MemberService;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -51,9 +50,5 @@ public class MemberController {
         return memberService.findByMemberId(memberId);
     }
 
-    @PostMapping("/api/v1/my")
-    public MemberResponseDto mypage(Authentication authentication){
-        return memberService.mypage(authentication);
-    }
 
 }
