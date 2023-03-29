@@ -1,5 +1,6 @@
 package com.example.board.controller;
 
+import com.example.board.dto.PostListResponseDto;
 import com.example.board.dto.PostUpdateRequestDto;
 import com.example.board.dto.PostsResponseDto;
 import com.example.board.dto.PostsSaveRequestDto;
@@ -8,6 +9,8 @@ import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(tags = "게시판 API")
 @RequiredArgsConstructor
@@ -36,4 +39,10 @@ public class PostsApiController {
     @Operation(summary = "글 삭제")
     @DeleteMapping("/api/v1/posts/{id}")
     public String deletePost(@PathVariable Long id){return postsService.deletePost(id);}
+
+    @Operation(summary = "전체 글 조회")
+    @GetMapping("/api/v1/posts")
+    public List<PostListResponseDto> findAllDesc(){
+        return postsService.findAllDesc();
+    }
 }

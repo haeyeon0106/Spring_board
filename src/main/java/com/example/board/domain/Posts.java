@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -24,8 +25,12 @@ public class Posts {
 
     private String author;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     @OneToMany(mappedBy = "posts",cascade = CascadeType.ALL)
-    private List<Comments> comments;
+    private List<Comments> comments = new ArrayList<>();
 
     @Builder
     public Posts(String title,String contents,String author){
