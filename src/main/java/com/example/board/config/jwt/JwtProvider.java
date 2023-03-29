@@ -1,16 +1,25 @@
 package com.example.board.config.jwt;
 
 import com.example.board.dto.TokenDto;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Component
 public class JwtProvider {
@@ -56,4 +65,49 @@ public class JwtProvider {
                 .compact();
     }
 
+    public  boolean verifyToken(String token){
+        try{
+            Jws<Claims> claims = Jwts.parserBuilder()
+                    .setSigningKey(secretKey)
+                    .build().parseClaimsJws(token);
+
+            return claims.getBody()
+                    .getExpiration()
+                    .after(new Date());
+        }catch (Exception e){
+            return false;
+        }
+    }
+
+    // JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메소드
+    public Authentication getAuthentication(String token){
+        // 토큰 복호화
+        Claims claims = parseClaims(token);
+        log.info("claims: " + claims);
+
+        if(claims.get("name") == null){
+            throw new RuntimeException("Not Authorization");
+        }
+
+        // 클레임에서 권한 정보 가져오기
+        Collection<? extends GrantedAuthority> authorities =
+                Arrays.stream(claims.get("name").toString().split(","))
+                        .map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        log.info("authorities: " + authorities);
+
+        UserDetails userDetails = new User(claims.getSubject(),"",authorities);
+        return new UsernamePasswordAuthenticationToken(userDetails,"",authorities);
+    }
+
+    private Claims parseClaims(String token) {
+        try{
+            return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
+        }catch (ExpiredJwtException e){
+            return e.getClaims();
+        }
+    }
+
+    public String getUid(String token){
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+    }
 }
