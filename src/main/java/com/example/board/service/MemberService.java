@@ -1,17 +1,18 @@
 package com.example.board.service;
 
+import com.example.board.config.jwt.JwtProvider;
 import com.example.board.domain.Member;
-import com.example.board.dto.MemberRequestDto;
-import com.example.board.dto.MemberResponseDto;
-import com.example.board.dto.MemberUpdateDto;
+import com.example.board.dto.*;
 import com.example.board.exception.custom.InfoException;
 import com.example.board.exception.error.ErrorCode;
 import com.example.board.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 @RequiredArgsConstructor
 @Slf4j
@@ -20,6 +21,8 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 //    private PasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
+    private final RedisTemplate<String,Object> redisTemplate;
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     /*
     * 회원가입
@@ -46,17 +49,21 @@ public class MemberService {
     * */
 
     @Transactional
-    public MemberResponseDto login(MemberRequestDto memberRequestDto){
-        Member entity = memberRepository.findByMemberId(memberRequestDto.getMemberId());
+    public TokenDto login(LoginDto loginDto){
+        Member entity = memberRepository.findByMemberId(loginDto.getMemberId());
 
         // 아이디 비번 일치한 지 확인
         if(entity == null){
             throw new InfoException(ErrorCode.INTERNAL_SERVER_ERROR,"아이디가 일치하지 않습니다.");
-        } else if (!passwordEncoder.matches(memberRequestDto.getMemberPw(),entity.getMemberPw())) { //(암호화 전 비번, 암호화(db저장)된 비번)
+        } else if (!passwordEncoder.matches(loginDto.getMemberPw(),entity.getMemberPw())) { //(암호화 전 비번, 암호화(db저장)된 비번)
             throw new InfoException(ErrorCode.INTERNAL_SERVER_ERROR,"비밀번호가 일치하지 않습니다.");
         }
 
-        return new MemberResponseDto(entity);
+        MemberResponseDto responseDto = new MemberResponseDto(entity);
+        TokenDto tokenDto = jwtProvider.generateToken(responseDto.getMemberId(), responseDto.getName());
+        redisTemplate.opsForValue().set(entity.getMemberId(),tokenDto.getRefreshToken());
+
+        return tokenDto;
     }
 
     /*
