@@ -30,7 +30,7 @@ public class CommentService {
 
         CommentsRequestDto dto = CommentsRequestDto.builder()
                 .contents(commentsRequestDto.getContents())
-//                .member(member)
+                .member(commentsRequestDto.getMember())
                 .posts(posts).build();
 
         return commentRepository.save(dto.toEntity()).getId();

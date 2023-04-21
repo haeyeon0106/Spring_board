@@ -1,10 +1,7 @@
 package com.example.board.controller;
 
 import com.example.board.config.jwt.JwtProvider;
-import com.example.board.dto.MemberRequestDto;
-import com.example.board.dto.MemberResponseDto;
-import com.example.board.dto.MemberUpdateDto;
-import com.example.board.dto.TokenDto;
+import com.example.board.dto.*;
 import com.example.board.service.MemberService;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,10 +27,10 @@ public class MemberController {
     // 로그인
     @Operation(summary = "로그인")
     @PostMapping("/api/v1/login")
-    public TokenDto login(@RequestBody MemberRequestDto memberRequestDto){
-        MemberResponseDto loginResponse = memberService.login(memberRequestDto);
-        return jwtProvider.generateToken(loginResponse.getMemberId(),loginResponse.getName());
-//        return memberService.login(memberRequestDto);
+    public TokenDto login(@RequestBody LoginDto loginDto){
+//        MemberResponseDto loginResponse = memberService.login(loginDto);
+//        return jwtProvider.generateToken(loginResponse.getMemberId(),loginResponse.getName());
+        return memberService.login(loginDto);
     }
 
     // 이름 수정
@@ -49,6 +46,5 @@ public class MemberController {
     public MemberResponseDto findByMemberId(@PathVariable String memberId){
         return memberService.findByMemberId(memberId);
     }
-
 
 }

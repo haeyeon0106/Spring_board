@@ -1,17 +1,22 @@
 package com.example.board.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-@Getter
+@AllArgsConstructor
 @NoArgsConstructor
+@Getter
 @Entity
-public class Posts {
+@Builder
+public class Posts extends BaseTimeEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,12 +37,13 @@ public class Posts {
     @OneToMany(mappedBy = "posts",cascade = CascadeType.ALL)
     private List<Comments> comments = new ArrayList<>();
 
-    @Builder
-    public Posts(String title,String contents,String author){
-        this.title = title;
-        this.contents = contents;
-        this.author = author;
-    }
+
+//    @Builder
+//    public Posts(String title,String contents,String author){
+//        this.title = title;
+//        this.contents = contents;
+//        this.author = author;
+//    }
 
     public void update(String title,String contents){
         this.title = title;

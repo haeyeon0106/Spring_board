@@ -8,7 +8,6 @@ import lombok.Setter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @NoArgsConstructor
-@Setter
 @Getter
 public class MemberRequestDto {
 

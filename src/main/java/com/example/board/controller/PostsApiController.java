@@ -8,6 +8,8 @@ import com.example.board.service.PostsService;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,8 +22,8 @@ public class PostsApiController {
 
     @Operation(summary = "글 등록")
     @PostMapping("/api/v1/posts")
-    public Long save(@RequestBody PostsSaveRequestDto postsSaveRequestDto){
-        return postsService.save(postsSaveRequestDto);
+    public ResponseEntity<Long> save(@RequestBody PostsSaveRequestDto postsSaveRequestDto){
+        return ResponseEntity.status(HttpStatus.OK).body(postsService.save(postsSaveRequestDto));
     }
 
     @Operation(summary = "글 수정")

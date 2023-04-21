@@ -1,6 +1,6 @@
 package com.example.board.config;
 
-import com.example.board.config.jwt.JwtAuthFilter;
+
 import com.example.board.config.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @RequiredArgsConstructor
 @Configuration
@@ -34,7 +33,7 @@ public class SecurityConfig {
                 .antMatchers("/api/doc", "/swagger-ui/*", "/swagger-resources/**",
                         "/swagger-ui.html", "/webjars/**", "/v3/api-docs").permitAll()
                 .anyRequest().authenticated();
-        http.addFilterBefore(new JwtAuthFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
+//        http.addFilterBefore(new JwtAuthFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
         return http.build();
 
     }

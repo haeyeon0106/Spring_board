@@ -3,6 +3,8 @@ package com.example.board.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -32,6 +34,9 @@ public class Member extends BaseTimeEntity{
         this.name = name;
         this.memberPw = memberPw;
     }
+
+    @OneToMany(mappedBy = "member")
+    private List<Posts> posts = new ArrayList<>();
 
     public void updateName(String newName){
         this.name = newName;

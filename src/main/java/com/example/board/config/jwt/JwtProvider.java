@@ -51,6 +51,7 @@ public class JwtProvider {
 
         return TokenDto.builder()
                 .accessToken(accessToken)
+                .refreshTokenExpiresTime(new Date(now.getTime() + refreshExpire).getTime())
                 .refreshToken(refreshToken)
                 .build();
     }
